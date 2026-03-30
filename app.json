@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "GST Invoice",
+    "slug": "gst-invoice-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "android": {
+      "package": "com.aditya.gstapp",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.aditya.gstapp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "aaf30491-47a4-4343-8488-4ed2817a7387"
+      }
+    }
+  }
+}
