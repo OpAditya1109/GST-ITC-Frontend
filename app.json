@@ -18,7 +18,10 @@
       }
     },
     "ios": {
-      "bundleIdentifier": "com.aditya.gstapp"
+      "bundleIdentifier": "com.aditya.gstapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "extra": {
       "eas": {
