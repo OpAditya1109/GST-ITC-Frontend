@@ -48,7 +48,10 @@ uploadInvoice: async (imageUri, invoiceType) => {
     set({ currentInvoice: data.data, isLoading: false });
     return data.data;
   } catch (err) {
-    set({ error: 'Upload failed', isLoading: false });
+   set({
+  error: err?.response?.data?.message || err.message || 'Upload failed',
+  isLoading: false,
+});
     throw err;
   }
 },

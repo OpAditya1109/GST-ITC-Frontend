@@ -16,7 +16,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import useInvoiceStore from '../store/invoiceStore';
 import { COLORS, SPACING, RADIUS } from '../utils/theme';
-
+import LimitModal from '../components/LimitModal';
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window');
 const FRAME_SIZE = SCREEN_W * 0.78;
 
@@ -98,6 +98,9 @@ const ScanScreen = ({ navigation }) => {
   const [uploading, setUploading]     = useState(false);
   const [flash, setFlash]             = useState(false);
   const cameraRef = useRef(null);
+const [showLimit, setShowLimit] = useState(false);
+const [limitData, setLimitData] = useState(null);
+
 
   const fadeAnim   = useRef(new Animated.Value(0)).current;
   const slideAnim  = useRef(new Animated.Value(30)).current;
@@ -150,8 +153,19 @@ const ScanScreen = ({ navigation }) => {
       await uploadInvoice(capturedUri, invoiceType);
       navigation.replace('Result');
     } catch (err) {
-      Alert.alert('Processing Failed', err.response?.data?.message || 'OCR failed. Try a clearer image.');
-    } finally {
+  const data = err.response?.data;
+  if (err.response?.status === 403 && data?.code === 'SCAN_LIMIT_REACHED') {
+    setLimitData({
+      used: data.scansUsed,
+      total: data.scansTotal,
+      planName: data.planName,   // ← add this
+
+    });
+    setShowLimit(true);
+  } else {
+    Alert.alert('Processing Failed', data?.message || 'OCR failed. Try a clearer image.');
+  }
+} finally {
       setUploading(false);
     }
   };
@@ -196,6 +210,7 @@ const ScanScreen = ({ navigation }) => {
   // ── Preview mode ─────────────────────────────────────────────────────────────
   if (mode === 'preview' && capturedUri) {
     return (
+      <>
       <Animated.View style={[{ flex: 1, backgroundColor: '#0F0D1E' }, { opacity: previewFade }]}>
         <SafeAreaView style={{ flex: 1 }}>
 
@@ -294,8 +309,21 @@ const ScanScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
+
         </SafeAreaView>
       </Animated.View>
+      {limitData && (
+  <LimitModal
+    visible={showLimit}
+    onClose={() => setShowLimit(false)}
+    onUpgrade={() => { setShowLimit(false); navigation.replace('Pricing'); }}
+    scansUsed={limitData.used}
+    scansTotal={limitData.total}
+    planName={limitData.planName}
+
+  />
+)}
+      </>
     );
   }
 

@@ -33,11 +33,11 @@ const useAuthStore = create((set, get) => ({
   },
 
   // ── Login ────────────────────────────────────────────────────────────────────
-  login: async (phone, password) => {
-    const { data } = await authAPI.login({ phone, password });
+login: async (identifier, password) => {
+  const { data } = await authAPI.login({ identifier, password });
     await SecureStore.setItemAsync('auth_token', data.token);
     set({ user: data.user, token: data.token });
-    return data;
+    return data.token;
   },
 
   // ── Register ─────────────────────────────────────────────────────────────────

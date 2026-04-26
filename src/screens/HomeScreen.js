@@ -1,8 +1,9 @@
 /**
- * screens/HomeScreen.js — Premium Landing Screen
- * Matches DashboardScreen design language: glassmorphism, gradients, animated entries
- * Fix: hero stats now pull from invoiceStore (same fetchSummary as DashboardScreen)
- * Fix: "What you can do" feature rows are now tappable with navigation
+ * screens/HomeScreen.js — Premium Landing Screen (Redesigned)
+ * Changes:
+ *  - Removed "Pricing" from Quick Actions (now only 3 focused actions)
+ *  - Added a premium "Upgrade to Pro" banner section with its own visual identity
+ *  - Refreshed design: tighter card hierarchy, better spacing, floating stat pills
  */
 
 import React, { useRef, useCallback } from 'react';
@@ -35,20 +36,32 @@ const getGreeting = () => {
 // ─── Action Card ───────────────────────────────────────────────────────────────
 const ActionCard = ({ icon, title, subtitle, gradientColors, onPress }) => {
   const scale = useRef(new Animated.Value(1)).current;
-  const onPressIn = () => Animated.spring(scale, { toValue: 0.96, useNativeDriver: true }).start();
-  const onPressOut = () => Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
+  const onPressIn = () =>
+    Animated.spring(scale, { toValue: 0.95, useNativeDriver: true }).start();
+  const onPressOut = () =>
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
   return (
     <Animated.View style={{ transform: [{ scale }], flex: 1 }}>
-      <TouchableOpacity onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut} activeOpacity={1}>
-        <LinearGradient colors={gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.actionCard}>
+      <TouchableOpacity
+        onPress={onPress}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+        activeOpacity={1}
+      >
+        <LinearGradient
+          colors={gradientColors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.actionCard}
+        >
           <View style={styles.actionDeco} />
           <View style={styles.actionIconWrap}>
-            <Ionicons name={icon} size={22} color="#fff" />
+            <Ionicons name={icon} size={20} color="#fff" />
           </View>
           <Text style={styles.actionTitle}>{title}</Text>
           <Text style={styles.actionSubtitle}>{subtitle}</Text>
           <View style={styles.actionArrow}>
-            <Ionicons name="arrow-forward" size={12} color="rgba(255,255,255,0.8)" />
+            <Ionicons name="arrow-forward" size={11} color="rgba(255,255,255,0.9)" />
           </View>
         </LinearGradient>
       </TouchableOpacity>
@@ -70,6 +83,82 @@ const TipCard = ({ tip, index }) => {
   );
 };
 
+// ─── Pricing / Upgrade Banner ──────────────────────────────────────────────────
+const UpgradeBanner = ({ onPress }) => {
+  const scale = useRef(new Animated.Value(1)).current;
+  const onPressIn = () =>
+    Animated.spring(scale, { toValue: 0.98, useNativeDriver: true }).start();
+  const onPressOut = () =>
+    Animated.spring(scale, { toValue: 1, useNativeDriver: true }).start();
+
+  const perks = ['Unlimited scans', 'Bulk Excel exports', 'Priority support'];
+
+  return (
+    <Animated.View style={[styles.upgradeShadow, { transform: [{ scale }] }]}>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={onPress}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+      >
+        <LinearGradient
+          colors={['#18122B', '#2D1B69', '#3D2A8A']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.upgradeBanner}
+        >
+          {/* Decorative orbs */}
+          <View style={styles.upgradeOrb1} />
+          <View style={styles.upgradeOrb2} />
+          <View style={styles.upgradeOrb3} />
+
+          {/* Left content */}
+          <View style={styles.upgradeLeft}>
+            {/* Badge */}
+            <View style={styles.upgradeBadge}>
+              <Ionicons name="flash" size={10} color="#FDE68A" />
+              <Text style={styles.upgradeBadgeText}>PRO PLAN</Text>
+            </View>
+
+            <Text style={styles.upgradeHeadline}>Unlock the full{'\n'}GST toolkit</Text>
+
+            {/* Perk pills */}
+            <View style={styles.upgradePerks}>
+              {perks.map((p) => (
+                <View key={p} style={styles.upgradePerkRow}>
+                  <View style={styles.upgradePerkDot} />
+                  <Text style={styles.upgradePerkText}>{p}</Text>
+                </View>
+              ))}
+            </View>
+
+            {/* CTA */}
+            <View style={styles.upgradeCta}>
+              <Text style={styles.upgradeCtaText}>View Plans</Text>
+              <Ionicons name="arrow-forward" size={13} color="#FDE68A" />
+            </View>
+          </View>
+
+          {/* Right: price pill */}
+          <View style={styles.upgradeRight}>
+            <View style={styles.upgradePricePill}>
+              <Text style={styles.upgradePriceFrom}>from</Text>
+              <Text style={styles.upgradePriceAmt}>₹2,999</Text>
+              <Text style={styles.upgradePricePer}>/mo</Text>
+            </View>
+            <View style={styles.upgradeStarRow}>
+              {[...Array(5)].map((_, i) => (
+                <Ionicons key={i} name="star" size={9} color="#FDE68A" style={{ marginHorizontal: 1 }} />
+              ))}
+            </View>
+            <Text style={styles.upgradeRatingText}>4.9 · 2k+ users</Text>
+          </View>
+        </LinearGradient>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
+
 // ─── Main HomeScreen ───────────────────────────────────────────────────────────
 const HomeScreen = ({ navigation }) => {
   const { user, logout } = useAuthStore();
@@ -81,14 +170,20 @@ const HomeScreen = ({ navigation }) => {
   const headerAnim  = useRef(new Animated.Value(0)).current;
   const heroAnim    = useRef(new Animated.Value(0)).current;
   const actionsAnim = useRef(new Animated.Value(0)).current;
+  const upgradeAnim = useRef(new Animated.Value(0)).current;
+  const featureAnim = useRef(new Animated.Value(0)).current;
   const bottomAnim  = useRef(new Animated.Value(0)).current;
 
   const runEntryAnimations = useCallback(() => {
-    [headerAnim, heroAnim, actionsAnim, bottomAnim].forEach((a) => a.setValue(0));
-    Animated.stagger(120, [
+    [headerAnim, heroAnim, actionsAnim, upgradeAnim, featureAnim, bottomAnim].forEach((a) =>
+      a.setValue(0)
+    );
+    Animated.stagger(100, [
       Animated.spring(headerAnim,  { toValue: 1, tension: 70, friction: 10, useNativeDriver: true }),
       Animated.spring(heroAnim,    { toValue: 1, tension: 60, friction: 10, useNativeDriver: true }),
       Animated.spring(actionsAnim, { toValue: 1, tension: 60, friction: 10, useNativeDriver: true }),
+      Animated.spring(upgradeAnim, { toValue: 1, tension: 55, friction: 10, useNativeDriver: true }),
+      Animated.spring(featureAnim, { toValue: 1, tension: 60, friction: 10, useNativeDriver: true }),
       Animated.spring(bottomAnim,  { toValue: 1, tension: 60, friction: 10, useNativeDriver: true }),
     ]).start();
   }, []);
@@ -105,16 +200,14 @@ const HomeScreen = ({ navigation }) => {
   const gstPayable    = summary?.gstPayable    || 0;
   const isRefund      = gstPayable < 0;
 
-  const breakdownMap = summary?.breakdown?.reduce((acc, item) => {
-    acc[item._id] = item;
-    return acc;
-  }, {}) || {};
+  const breakdownMap =
+    summary?.breakdown?.reduce((acc, item) => {
+      acc[item._id] = item;
+      return acc;
+    }, {}) || {};
 
   const outputCount = breakdownMap['output']?.count || 0;
-
-  const salesPct = totalInvoices > 0
-    ? Math.round((outputCount / totalInvoices) * 100)
-    : 0;
+  const salesPct    = totalInvoices > 0 ? Math.round((outputCount / totalInvoices) * 100) : 0;
 
   const formatAmount = (val) => {
     const abs = Math.abs(val);
@@ -125,7 +218,9 @@ const HomeScreen = ({ navigation }) => {
 
   const slideUp = (anim) => ({
     opacity: anim,
-    transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [28, 0] }) }],
+    transform: [
+      { translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [28, 0] }) },
+    ],
   });
 
   const tips = [
@@ -134,18 +229,19 @@ const HomeScreen = ({ navigation }) => {
     'CGST + SGST = intra-state · IGST = inter-state',
   ];
 
+  // ── Quick Actions — Pricing removed, now 3 focused cards ──────────────────
   const quickActions = [
     {
       icon: 'camera',
-      title: 'Scan Invoice',
-      subtitle: 'OCR extraction',
+      title: 'Scan',
+      subtitle: 'OCR extract',
       gradientColors: ['#6C63FF', '#8B5CF6'],
       onPress: () => navigation.navigate('Scan'),
     },
     {
       icon: 'bar-chart',
       title: 'GST Report',
-      subtitle: 'Monthly summary',
+      subtitle: 'Monthly view',
       gradientColors: ['#059669', '#10B981'],
       onPress: () => navigation.navigate('Dashboard'),
     },
@@ -158,7 +254,7 @@ const HomeScreen = ({ navigation }) => {
     },
   ];
 
-  // ── Feature items with onPress ─────────────────────────────────────────────
+  // ── Feature items ──────────────────────────────────────────────────────────
   const featureItems = [
     {
       icon: 'camera-outline',
@@ -187,12 +283,16 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="dark-content" backgroundColor="#F8F7FF" />
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scroll}
+      >
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <Animated.View style={[styles.header, slideUp(headerAnim)]}>
           <View>
-            <Text style={styles.headerEyebrow}>{greeting.icon} {greeting.text}</Text>
+            <Text style={styles.headerEyebrow}>
+              {greeting.icon} {greeting.text}
+            </Text>
             <Text style={styles.headerTitle}>
               {user?.name ? user.name.split(' ')[0] : 'Welcome'}
             </Text>
@@ -218,9 +318,11 @@ const HomeScreen = ({ navigation }) => {
             style={styles.heroWrapper}
           >
             <LinearGradient
-              colors={isRefund
-                ? ['#059669', '#10B981']
-                : ['#6C63FF', '#8B5CF6', '#A78BFA']}
+              colors={
+                isRefund
+                  ? ['#059669', '#10B981']
+                  : ['#6C63FF', '#8B5CF6', '#A78BFA']
+              }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.heroCard}
@@ -231,7 +333,7 @@ const HomeScreen = ({ navigation }) => {
 
               <View style={styles.heroContent}>
                 <View style={styles.heroIconWrap}>
-                  <Ionicons name="scan" size={32} color="#fff" />
+                  <Ionicons name="scan" size={30} color="#fff" />
                 </View>
                 <View style={styles.heroTextWrap}>
                   <View style={styles.heroChip}>
@@ -246,11 +348,13 @@ const HomeScreen = ({ navigation }) => {
                 </View>
               </View>
 
-              {/* ── Live stats ── */}
+              {/* Live stats */}
               <View style={styles.heroStatsRow}>
                 <View style={styles.heroStatItem}>
                   <Text style={styles.heroStatNum}>{formatAmount(gstPayable)}</Text>
-                  <Text style={styles.heroStatLbl}>{isRefund ? 'Refund Due' : 'GST Due'}</Text>
+                  <Text style={styles.heroStatLbl}>
+                    {isRefund ? 'Refund Due' : 'GST Due'}
+                  </Text>
                 </View>
                 <View style={styles.heroStatDivider} />
                 <View style={styles.heroStatItem}>
@@ -267,7 +371,7 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         </Animated.View>
 
-        {/* ── Quick Actions ────────────────────────────────────────────────── */}
+        {/* ── Quick Actions (3 cards — no Pricing) ────────────────────────── */}
         <Animated.View style={slideUp(actionsAnim)}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionsRow}>
@@ -277,19 +381,32 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </Animated.View>
 
+        {/* ── ✨ Upgrade Banner (Pricing) ──────────────────────────────────── */}
+        <Animated.View style={slideUp(upgradeAnim)}>
+          <View style={styles.upgradeLabelRow}>
+            <Ionicons name="flash" size={14} color="#F59E0B" />
+            <Text style={styles.sectionTitleInline}>  Upgrade & Save</Text>
+          </View>
+          <UpgradeBanner onPress={() => navigation.navigate('Pricing')} />
+        </Animated.View>
+
         {/* ── Feature Highlights ───────────────────────────────────────────── */}
-        <Animated.View style={slideUp(actionsAnim)}>
+        <Animated.View style={slideUp(featureAnim)}>
           <Text style={styles.sectionTitle}>What you can do</Text>
           <View style={styles.featuresCard}>
             {featureItems.map((f, i) => (
               <View key={f.title}>
-                {/* ✅ Fix: wrapped in TouchableOpacity so the arrow is tappable */}
                 <TouchableOpacity
                   style={styles.featureRow}
                   onPress={f.onPress}
                   activeOpacity={0.7}
                 >
-                  <View style={[styles.featureIconWrap, { backgroundColor: f.color + '15' }]}>
+                  <View
+                    style={[
+                      styles.featureIconWrap,
+                      { backgroundColor: f.color + '15' },
+                    ]}
+                  >
                     <Ionicons name={f.icon} size={20} color={f.color} />
                   </View>
                   <View style={styles.featureText}>
@@ -298,7 +415,9 @@ const HomeScreen = ({ navigation }) => {
                   </View>
                   <Ionicons name="chevron-forward" size={14} color="#D1D5DB" />
                 </TouchableOpacity>
-                {i < featureItems.length - 1 && <View style={styles.featureDivider} />}
+                {i < featureItems.length - 1 && (
+                  <View style={styles.featureDivider} />
+                )}
               </View>
             ))}
           </View>
@@ -308,7 +427,7 @@ const HomeScreen = ({ navigation }) => {
         <Animated.View style={slideUp(bottomAnim)}>
           <View style={styles.tipsHeader}>
             <Ionicons name="bulb" size={15} color="#F59E0B" />
-            <Text style={styles.sectionTitleInline}>Pro Tips</Text>
+            <Text style={styles.sectionTitleInline}>  Pro Tips</Text>
           </View>
           <View style={styles.tipsWrap}>
             {tips.map((tip, i) => (
@@ -328,7 +447,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F8F7FF' },
   scroll: { paddingHorizontal: 16, paddingBottom: 16, gap: 14 },
 
-  // Header
+  // ── Header
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -345,21 +464,21 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start', marginTop: 6,
   },
   businessText: { fontSize: 11, fontWeight: '700', color: '#6C63FF', letterSpacing: 0.2 },
-  logoutBtn: { marginTop: 4 },
-  logoutInner: {
+  logoutBtn:    { marginTop: 4 },
+  logoutInner:  {
     width: 38, height: 38, borderRadius: 19,
     backgroundColor: '#EDE9FE',
     alignItems: 'center', justifyContent: 'center',
   },
 
-  // Hero
+  // ── Hero
   heroWrapper: {
     shadowColor: '#6C63FF',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.28, shadowRadius: 20,
     elevation: 10, borderRadius: 24,
   },
-  heroCard: { borderRadius: 24, padding: 20, overflow: 'hidden' },
+  heroCard:  { borderRadius: 24, padding: 20, overflow: 'hidden' },
   heroDeco1: {
     position: 'absolute', top: -40, right: -40,
     width: 140, height: 140, borderRadius: 70,
@@ -375,24 +494,24 @@ const styles = StyleSheet.create({
     width: 60, height: 60, borderRadius: 30,
     backgroundColor: 'rgba(255,255,255,0.05)',
   },
-  heroContent: { flexDirection: 'row', alignItems: 'center', marginBottom: 18, gap: 12 },
-  heroIconWrap: {
+  heroContent:    { flexDirection: 'row', alignItems: 'center', marginBottom: 18, gap: 12 },
+  heroIconWrap:   {
     width: 58, height: 58, borderRadius: 18,
     backgroundColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center', justifyContent: 'center',
   },
-  heroTextWrap: { flex: 1 },
-  heroChip: {
+  heroTextWrap:   { flex: 1 },
+  heroChip:       {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     backgroundColor: 'rgba(255,255,255,0.18)',
     borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3,
     alignSelf: 'flex-start', marginBottom: 5,
   },
-  heroChipDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#FDE68A' },
-  heroChipText: { fontSize: 10, fontWeight: '700', color: '#fff', letterSpacing: 0.3 },
-  heroTitle: { fontSize: 18, fontWeight: '800', color: '#fff', letterSpacing: -0.4 },
-  heroSub:   { fontSize: 12, color: 'rgba(255,255,255,0.72)', marginTop: 2 },
-  heroArrowCircle: {
+  heroChipDot:    { width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#FDE68A' },
+  heroChipText:   { fontSize: 10, fontWeight: '700', color: '#fff', letterSpacing: 0.3 },
+  heroTitle:      { fontSize: 18, fontWeight: '800', color: '#fff', letterSpacing: -0.4 },
+  heroSub:        { fontSize: 12, color: 'rgba(255,255,255,0.72)', marginTop: 2 },
+  heroArrowCircle:{
     width: 34, height: 34, borderRadius: 17,
     backgroundColor: '#fff',
     alignItems: 'center', justifyContent: 'center',
@@ -407,21 +526,22 @@ const styles = StyleSheet.create({
   heroStatLbl:     { fontSize: 10, color: 'rgba(255,255,255,0.65)', marginTop: 2, fontWeight: '500' },
   heroStatDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)' },
 
-  // Section titles
+  // ── Section titles
   sectionTitle: {
     fontSize: 16, fontWeight: '800', color: '#1A1535',
     letterSpacing: -0.3, marginTop: 4, marginBottom: 2,
   },
-  tipsHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4, marginBottom: 2 },
+  upgradeLabelRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 2 },
+  tipsHeader:      { flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 2 },
   sectionTitleInline: { fontSize: 16, fontWeight: '800', color: '#1A1535', letterSpacing: -0.3 },
 
-  // Quick Actions
+  // ── Quick Actions
   actionsRow: { flexDirection: 'row', gap: 10 },
   actionCard: {
-    borderRadius: 20, padding: 16, overflow: 'hidden',
+    borderRadius: 20, padding: 14, overflow: 'hidden',
     shadowColor: '#000', shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1, shadowRadius: 8, elevation: 4,
-    minHeight: 120, justifyContent: 'space-between',
+    minHeight: 118, justifyContent: 'space-between',
   },
   actionDeco: {
     position: 'absolute', top: -20, right: -20,
@@ -429,20 +549,92 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.12)',
   },
   actionIconWrap: {
-    width: 38, height: 38, borderRadius: 12,
+    width: 36, height: 36, borderRadius: 11,
     backgroundColor: 'rgba(255,255,255,0.22)',
     alignItems: 'center', justifyContent: 'center',
   },
   actionTitle:    { fontSize: 13, fontWeight: '800', color: '#fff', marginTop: 8, letterSpacing: -0.2 },
   actionSubtitle: { fontSize: 10, color: 'rgba(255,255,255,0.72)', fontWeight: '500' },
   actionArrow: {
-    width: 22, height: 22, borderRadius: 11,
+    width: 20, height: 20, borderRadius: 10,
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center', justifyContent: 'center',
-    alignSelf: 'flex-end', marginTop: 6,
+    alignSelf: 'flex-end', marginTop: 4,
   },
 
-  // Features card
+  // ── Upgrade / Pricing Banner
+  upgradeShadow: {
+    shadowColor: '#2D1B69',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.35, shadowRadius: 22,
+    elevation: 12, borderRadius: 24,
+  },
+  upgradeBanner: {
+    borderRadius: 24, padding: 22,
+    flexDirection: 'row', alignItems: 'center',
+    overflow: 'hidden',
+  },
+  upgradeOrb1: {
+    position: 'absolute', top: -30, right: 60,
+    width: 110, height: 110, borderRadius: 55,
+    backgroundColor: 'rgba(108,99,255,0.35)',
+  },
+  upgradeOrb2: {
+    position: 'absolute', bottom: -40, right: -20,
+    width: 130, height: 130, borderRadius: 65,
+    backgroundColor: 'rgba(167,139,250,0.2)',
+  },
+  upgradeOrb3: {
+    position: 'absolute', top: 10, left: 120,
+    width: 60, height: 60, borderRadius: 30,
+    backgroundColor: 'rgba(253,230,138,0.08)',
+  },
+  upgradeLeft: { flex: 1, paddingRight: 16 },
+  upgradeBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: 'rgba(253,230,138,0.15)',
+    borderWidth: 1, borderColor: 'rgba(253,230,138,0.3)',
+    borderRadius: 20, paddingHorizontal: 9, paddingVertical: 4,
+    alignSelf: 'flex-start', marginBottom: 10,
+  },
+  upgradeBadgeText: {
+    fontSize: 9, fontWeight: '800', color: '#FDE68A',
+    letterSpacing: 1.2,
+  },
+  upgradeHeadline: {
+    fontSize: 20, fontWeight: '900', color: '#fff',
+    letterSpacing: -0.5, lineHeight: 26, marginBottom: 12,
+  },
+  upgradePerks:    { gap: 6, marginBottom: 16 },
+  upgradePerkRow:  { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  upgradePerkDot:  {
+    width: 5, height: 5, borderRadius: 2.5,
+    backgroundColor: '#A78BFA',
+  },
+  upgradePerkText: { fontSize: 12, color: 'rgba(255,255,255,0.75)', fontWeight: '500' },
+  upgradeCta: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    backgroundColor: 'rgba(253,230,138,0.15)',
+    borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8,
+    alignSelf: 'flex-start',
+    borderWidth: 1, borderColor: 'rgba(253,230,138,0.35)',
+  },
+  upgradeCtaText: { fontSize: 13, fontWeight: '800', color: '#FDE68A', letterSpacing: 0.2 },
+
+  upgradeRight: { alignItems: 'center', gap: 8 },
+  upgradePricePill: {
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    borderRadius: 18, paddingHorizontal: 16, paddingVertical: 12,
+    alignItems: 'center',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
+  },
+  upgradePriceFrom: { fontSize: 9, color: 'rgba(255,255,255,0.5)', fontWeight: '600', letterSpacing: 0.5 },
+  upgradePriceAmt:  { fontSize: 26, fontWeight: '900', color: '#fff', letterSpacing: -1 },
+  upgradePricePer:  { fontSize: 10, color: 'rgba(255,255,255,0.55)', fontWeight: '600' },
+  upgradeStarRow:   { flexDirection: 'row', alignItems: 'center' },
+  upgradeRatingText:{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: '500' },
+
+  // ── Features card
   featuresCard: {
     backgroundColor: '#fff', borderRadius: 20, padding: 4,
     shadowColor: '#6C63FF', shadowOffset: { width: 0, height: 2 },
@@ -455,7 +647,7 @@ const styles = StyleSheet.create({
   featureSub:     { fontSize: 11, color: '#6B7280', marginTop: 2, lineHeight: 15 },
   featureDivider: { height: 1, backgroundColor: '#F3F4F6', marginHorizontal: 14 },
 
-  // Tips
+  // ── Tips
   tipsWrap: { gap: 8 },
   tipCard: {
     flexDirection: 'row', alignItems: 'center',

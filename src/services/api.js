@@ -47,6 +47,10 @@ export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
   getMe: () => api.get('/auth/me'),
+  saveDeviceToken: (token) => api.post('/auth/device-token', { token }),
+  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+  verifyOtp: (email, otp) => api.post('/auth/verify-otp', { email, otp }),
+  resetPassword: (resetToken, newPassword) => api.post('/auth/reset-password', { resetToken, newPassword }),
 };
 
 // ─── Invoice Endpoints ────────────────────────────────────────────────────────
