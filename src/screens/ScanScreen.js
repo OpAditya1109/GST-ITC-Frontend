@@ -134,17 +134,17 @@ const [limitData, setLimitData] = useState(null);
     }
   };
 
-  const pickFromGallery = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      return Alert.alert('Permission needed', 'Allow photo library access to upload invoices');
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.85, allowsEditing: true,
-    });
-    if (!result.canceled && result.assets[0]) enterPreview(result.assets[0].uri);
-  };
+const pickFromGallery = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    quality: 0.85,
+    allowsEditing: true,
+  });
+
+  if (!result.canceled && result.assets[0]) {
+    enterPreview(result.assets[0].uri);
+  }
+};
 
   const processInvoice = async () => {
     if (!capturedUri) return;
