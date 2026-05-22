@@ -57,7 +57,7 @@ const PLANS = [
     featured: true,
     badge: 'Most Popular',
     features: [
-      { text: '100 invoice scans / month',   power: true  },
+      { text: '50 invoice scans / month',   power: true  },
       { text: 'Full GST report export',       power: true  },
       { text: 'Invoice history (6 months)',   power: true  },
       { text: 'Email support',                power: false },
@@ -73,7 +73,7 @@ const PLANS = [
     accent: '#F59E0B',
     gradientColors: ['#451A03', '#78350F'],
     features: [
-      { text: '500 invoice scans / month',   power: true  },
+      { text: '250 invoice scans / month',   power: true  },
       { text: 'Advanced analytics & reports', power: true  },
       { text: 'Full invoice history',         power: true  },
       { text: 'Priority support',             power: true  },

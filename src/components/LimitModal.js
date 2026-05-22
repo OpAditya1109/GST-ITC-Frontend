@@ -107,7 +107,7 @@ const getUpgradeTarget = (planName) => {
     case 'free':    return { label: 'Starter',    price: '₹1,499/mo'      };
     case 'starter': return { label: 'Pro',        price: '₹3,999/mo'    };
     case 'pro':     return { label: 'Enterprise', price: 'Contact Sales' };
-    default:        return { label: 'Starter',    price: '₹1,499/mo'      };
+    default:        return { label: 'Free',    price: '0'      };
   }
 };
 
@@ -116,14 +116,14 @@ const getPlanPerks = (planName) => {
   switch (planName?.toLowerCase()) {
     case 'free':
       return [
-        { icon: 'infinite-outline',         label: '100 invoice scans/month',        delay: 0.0  },
+        { icon: 'infinite-outline',         label: '50 invoice scans/month',        delay: 0.0  },
         { icon: 'document-text-outline',    label: 'Full GST report export',         delay: 0.15 },
         { icon: 'time-outline',             label: 'Invoice history (6 months)',      delay: 0.3  },
         { icon: 'mail-outline',             label: 'Email support',                  delay: 0.45 },
       ];
     case 'starter':
       return [
-        { icon: 'trending-up-outline',      label: '500 invoice scans/month',        delay: 0.0  },
+        { icon: 'trending-up-outline',      label: '250 invoice scans/month',        delay: 0.0  },
         { icon: 'analytics-outline',        label: 'Advanced analytics dashboard',   delay: 0.15 },
         { icon: 'infinite-outline',         label: 'Full invoice history',           delay: 0.3  },
         { icon: 'flash-outline',            label: 'Priority AI processing',         delay: 0.45 },
@@ -137,7 +137,7 @@ const getPlanPerks = (planName) => {
       ];
     default:
       return [
-        { icon: 'infinite-outline',         label: '100 invoice scans/month',        delay: 0.0  },
+        { icon: 'infinite-outline',         label: '5 invoice scans/month',        delay: 0.0  },
         { icon: 'document-text-outline',    label: 'Full GST report export',         delay: 0.15 },
         { icon: 'time-outline',             label: 'Invoice history (6 months)',      delay: 0.3  },
         { icon: 'mail-outline',             label: 'Email support',                  delay: 0.45 },

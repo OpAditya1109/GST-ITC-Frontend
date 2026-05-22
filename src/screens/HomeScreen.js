@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
 
   // Company logo in header
   logoWrap: {
-    backgroundColor: '#fff',
+   
     borderRadius: 14,
     padding: 6,
     shadowColor: '#6C63FF',
@@ -526,8 +526,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoImage: {
-    width: 80,   // adjust width to suit your logo's aspect ratio
-    height: 28,  // adjust height to suit your logo's aspect ratio
+    width: 40,   // adjust width to suit your logo's aspect ratio
+    height: 40,  // adjust height to suit your logo's aspect ratio
   },
 
   // Logout
