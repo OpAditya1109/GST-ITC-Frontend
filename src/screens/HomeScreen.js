@@ -4,6 +4,8 @@
  *  - Removed "Pricing" from Quick Actions (now only 3 focused actions)
  *  - Added a premium "Upgrade to Pro" banner section with its own visual identity
  *  - Refreshed design: tighter card hierarchy, better spacing, floating stat pills
+ *  - Added company logo (image) in header left of logout button
+ *  - Added "Made by Adityax Innovations Private Limited" footer
  */
 
 import React, { useRef, useCallback } from 'react';
@@ -15,6 +17,7 @@ import {
   TouchableOpacity,
   Animated,
   StatusBar,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,6 +27,10 @@ import dayjs from 'dayjs';
 import useAuthStore from '../store/authStore';
 import useInvoiceStore from '../store/invoiceStore';
 import { COLORS, SPACING, RADIUS, SHADOW } from '../utils/theme';
+
+// ─── IMPORTANT: Replace this path with your actual logo file path ──────────────
+// Example: require('../assets/adityax-logo.png')
+const COMPANY_LOGO = require('../../assets/adityax.png');
 
 // ─── Greeting helper ───────────────────────────────────────────────────────────
 const getGreeting = () => {
@@ -229,7 +236,7 @@ const HomeScreen = ({ navigation }) => {
     'CGST + SGST = intra-state · IGST = inter-state',
   ];
 
-  // ── Quick Actions — Pricing removed, now 3 focused cards ──────────────────
+  // ── Quick Actions ──────────────────────────────────────────────────────────
   const quickActions = [
     {
       icon: 'camera',
@@ -289,6 +296,7 @@ const HomeScreen = ({ navigation }) => {
       >
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <Animated.View style={[styles.header, slideUp(headerAnim)]}>
+          {/* Left: greeting */}
           <View>
             <Text style={styles.headerEyebrow}>
               {greeting.icon} {greeting.text}
@@ -303,11 +311,25 @@ const HomeScreen = ({ navigation }) => {
               </View>
             )}
           </View>
-          <TouchableOpacity onPress={logout} style={styles.logoutBtn} activeOpacity={0.75}>
-            <View style={styles.logoutInner}>
-              <Ionicons name="log-out-outline" size={18} color="#6C63FF" />
+
+          {/* Right: Logo + Logout */}
+          <View style={styles.headerRight}>
+            {/* Company Logo */}
+            <View style={styles.logoWrap}>
+              <Image
+                source={COMPANY_LOGO}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </View>
-          </TouchableOpacity>
+
+            {/* Logout */}
+            <TouchableOpacity onPress={logout} style={styles.logoutBtn} activeOpacity={0.75}>
+              <View style={styles.logoutInner}>
+                <Ionicons name="log-out-outline" size={18} color="#6C63FF" />
+              </View>
+            </TouchableOpacity>
+          </View>
         </Animated.View>
 
         {/* ── Hero CTA ────────────────────────────────────────────────────── */}
@@ -371,7 +393,7 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         </Animated.View>
 
-        {/* ── Quick Actions (3 cards — no Pricing) ────────────────────────── */}
+        {/* ── Quick Actions ────────────────────────────────────────────────── */}
         <Animated.View style={slideUp(actionsAnim)}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionsRow}>
@@ -381,7 +403,7 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </Animated.View>
 
-        {/* ── ✨ Upgrade Banner (Pricing) ──────────────────────────────────── */}
+        {/* ── ✨ Upgrade Banner ────────────────────────────────────────────── */}
         <Animated.View style={slideUp(upgradeAnim)}>
           <View style={styles.upgradeLabelRow}>
             <Ionicons name="flash" size={14} color="#F59E0B" />
@@ -436,7 +458,24 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </Animated.View>
 
-        <View style={{ height: 32 }} />
+        {/* ── Footer ───────────────────────────────────────────────────────── */}
+        <View style={styles.footer}>
+          <View style={styles.footerDivider} />
+          <View style={styles.footerContent}>
+            <Image
+              source={COMPANY_LOGO}
+              style={styles.footerLogo}
+              resizeMode="contain"
+            />
+            <View style={styles.footerTextWrap}>
+              <Text style={styles.footerMadeBy}>Made by</Text>
+              <Text style={styles.footerBrandName}>
+                Adityax Innovations Private Limited
+              </Text>
+            </View>
+          </View>
+        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -464,7 +503,35 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start', marginTop: 6,
   },
   businessText: { fontSize: 11, fontWeight: '700', color: '#6C63FF', letterSpacing: 0.2 },
-  logoutBtn:    { marginTop: 4 },
+
+  // Header right cluster
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
+
+  // Company logo in header
+  logoWrap: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 6,
+    shadowColor: '#6C63FF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoImage: {
+    width: 80,   // adjust width to suit your logo's aspect ratio
+    height: 28,  // adjust height to suit your logo's aspect ratio
+  },
+
+  // Logout
+  logoutBtn:    { },
   logoutInner:  {
     width: 38, height: 38, borderRadius: 19,
     backgroundColor: '#EDE9FE',
@@ -657,6 +724,47 @@ const styles = StyleSheet.create({
   },
   tipIconWrap: { width: 30, height: 30, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   tipText:     { flex: 1, fontSize: 13, color: '#374151', fontWeight: '500', lineHeight: 18 },
+
+  // ── Footer
+  footer: {
+    alignItems: 'center',
+    paddingTop: 8,
+    paddingBottom: 24,
+    gap: 10,
+  },
+  footerDivider: {
+    height: 1,
+    width: '50%',
+    backgroundColor: '#E5E7EB',
+  },
+  footerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  footerLogo: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  footerTextWrap: {
+    alignItems: 'flex-start',
+    gap: 1,
+  },
+  footerMadeBy: {
+    fontSize: 9,
+    color: '#9CA3AF',
+    fontWeight: '500',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  footerBrandName: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#6C63FF',
+    letterSpacing: -0.1,
+  },
 });
 
 export default HomeScreen;
