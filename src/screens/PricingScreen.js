@@ -48,7 +48,7 @@ const PLANS = [
   {
     id: 'starter',
     name: 'Starter',
-    price: '₹999',
+    price: '₹1,499',
     period: '/mo',
     tagline: 'Perfect for growing businesses',
     icon: 'flash-outline',
@@ -66,7 +66,7 @@ const PLANS = [
   {
     id: 'pro',
     name: 'Pro',
-    price: '₹2,999',
+    price: '₹3,999',
     period: '/mo',
     tagline: 'For high-volume operations',
     icon: 'rocket-outline',

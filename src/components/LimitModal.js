@@ -104,10 +104,10 @@ const PerkRow = ({ icon, label, delay, enterAnim }) => {
 // Maps current plan → what they should upgrade to, with real prices from planController
 const getUpgradeTarget = (planName) => {
   switch (planName?.toLowerCase()) {
-    case 'free':    return { label: 'Starter',    price: '₹999/mo'      };
-    case 'starter': return { label: 'Pro',        price: '₹2,999/mo'    };
+    case 'free':    return { label: 'Starter',    price: '₹1,499/mo'      };
+    case 'starter': return { label: 'Pro',        price: '₹3,999/mo'    };
     case 'pro':     return { label: 'Enterprise', price: 'Contact Sales' };
-    default:        return { label: 'Starter',    price: '₹999/mo'      };
+    default:        return { label: 'Starter',    price: '₹1,499/mo'      };
   }
 };
 

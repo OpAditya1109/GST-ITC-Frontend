@@ -143,7 +143,7 @@ const UpgradeBanner = ({ onPress }) => {
           <View style={styles.upgradeRight}>
             <View style={styles.upgradePricePill}>
               <Text style={styles.upgradePriceFrom}>from</Text>
-              <Text style={styles.upgradePriceAmt}>₹2,999</Text>
+              <Text style={styles.upgradePriceAmt}>₹3,999</Text>
               <Text style={styles.upgradePricePer}>/mo</Text>
             </View>
             <View style={styles.upgradeStarRow}>
